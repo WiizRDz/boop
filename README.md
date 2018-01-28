@@ -11,3 +11,5 @@ Objective:
   - One of the side will glow with one of the player's colour
   - If it is your colour, try to hit the wall before the timer below runs out
   - If it is not your colour, try to prevent them from getting to the wall, you can block with your body and use boop to push them back
+
+Either go to https://wiizrdz.github.io/boop/ or download "boop.html" and run it
