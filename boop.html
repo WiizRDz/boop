@@ -1,0 +1,381 @@
+<!doctypehtml>
+<html>
+	<head>
+		<title>boop</title>
+	</head>
+
+	<body style="background: #000000;">
+
+		<canvas style="background: #000000; top = 0; left = 0;" id="myCanvas" onmousedown="mouseClick(event, 'd')" onmousemove="mousePosition(event)" onmouseup="mouseClick(event, 'u')" onmousewheel="scrollWheel(event)" onmouseout="mouseout()"></canvas>
+
+	</body>
+
+	<script>
+var canvas = document.getElementById("myCanvas");
+var ctx = canvas.getContext("2d");
+var width = canvas.width;
+var height = canvas.height;
+var fl = window.innerHeight/2+125;
+var cl = window.innerHeight/2-275;
+var left = [false, false];
+var right = [false, false];
+var up = [false, false];
+var shoot = [false, false];
+var jc = [0, 0];
+var attacker = Math.round(Math.random()); // 0 means they are attacking
+var boopAmount = 20;
+var lifeAmount = 500;
+var rounds = 0;
+
+
+document.addEventListener("keydown", keyDownHandler, false);
+document.addEventListener("keyup", keyUpHandler, false);
+
+var allowKP = true;
+function keyDownHandler(e) {
+	if (e.repeat != undefined) {
+		allowKP = !e.repeat;
+	}
+	if (!allowKP) {return;}
+	allowKP = false;
+
+	if (e.keyCode == 87) {
+		// w
+		if (jc[0] == 0 && up[0]) {
+			chars[0].yc = 8;
+			jc[0]++;
+		}
+		up[0] = true;
+	}
+	if (e.keyCode == 68) {
+		// d
+		right[0] = true;
+	}
+	if (e.keyCode == 83) {
+		// s
+		shoot[0] = true;
+	}
+	if (e.keyCode == 65) {
+		// a
+		left[0] = true;
+	}
+	if (e.keyCode == 49) {
+		// 1
+
+	}
+	if (e.keyCode == 50) {
+		// 2
+
+	}
+	if (e.keyCode == 51) {
+		// 3
+
+	}
+	if (e.keyCode == 52) {
+		// 4
+
+	}
+	if (e.keyCode == 37) {
+		// left
+		left[1] = true;
+	}
+	if (e.keyCode == 38) {
+		// up
+		if (jc[1] == 0 && up[1]) {
+			chars[1].yc = 8;
+			jc[1]++;
+		}
+		up[1] = true;
+	}
+	if (e.keyCode == 39) {
+		// right
+		right[1] = true;
+	}
+	if (e.keyCode == 40) {
+		// down
+		shoot[1] = true;
+	}
+	if (e.keyCode == 32) {
+		// space
+		
+	}
+}
+
+function keyUpHandler(e) {
+	if (e.keyCode == 87) {
+		// w
+		//up[0] = false;
+	}
+	if (e.keyCode == 68) {
+		// d
+		right[0] = false;
+	}
+	if (e.keyCode == 83) {
+		// s
+		shoot[0] = false;
+	}
+	if (e.keyCode == 65) {
+		// a
+		left[0] = false;
+	}
+	if (e.keyCode == 32) {
+		// space
+	}
+	if (e.keyCode == 37) {
+		// left
+		left[1] = false;
+	}
+	if (e.keyCode == 38) {
+		// up
+		
+	}
+	if (e.keyCode == 39) {
+		// right
+		right[1] = false;
+	}
+	if (e.keyCode == 40) {
+		// down
+		shoot[1] = false;
+	}
+}
+
+function mouseout() {
+
+}
+
+function mouseClick(e,s) {
+	if (s == 'd') {
+
+		//console.log('down');
+	}
+	if (s == 'u') {
+
+		//console.log('up');
+	}
+}
+
+function scrollWheel(e) {
+	if (e.wheelDelta > 0) {
+
+	}
+	if (e.wheelDelta < 0) {
+	
+	}
+}
+
+function mousePosition(e) {
+	// xa = e.clientX;
+	// ya = e.clientY;
+	//console.log('x = ', e.clientX, 'y = ', e.clientY);
+}
+
+class Player {
+	constructor(charID) {
+		this.charID = charID;
+		this.y = fl-25;
+		this.yp = 0;
+		this.yc = 0;
+		this.beenBooped = false;
+		this.boopVelo = 0;
+		this.att = 0;
+		if (charID == 0) {this.x = 75; this.c = "#EBEB87";} else {this.x = window.innerWidth-100; this.c = "#E7B7FA";}
+	}
+
+	update(l, r, u, f) {
+		this.hitY();
+		if (l && Math.abs(this.boopVelo) < 10) {this.x-=6+this.att*2.5; if (this.yp == 0) {this.x-=2;} this.hitX(); }
+		if (r && Math.abs(this.boopVelo) < 10) {this.x+=6+this.att*2.5; if (this.yp == 0) {this.x+=2;} this.hitX(); }
+		if (u) {this.jump(); this.y = fl - 25 + this.yp; this.hitY(); }
+		if (f && this.att) {this.boop();}
+		if (this.beenBooped) {this.booped();}
+		if (this.y < cl+25) { this.y = cl+25; this.yc = -1;}
+		this.outBounds();
+		ctx.beginPath();
+	    ctx.rect(this.x-25, this.y-25, 50, 50);
+	    ctx.strokeStyle = "#111111";
+	    ctx.lineWidth = 3;
+	    ctx.fillStyle = this.c;
+	    ctx.fill();
+	    ctx.stroke();
+	    ctx.closePath();
+	}
+
+	outBounds() {
+		if (this.x < 25) {
+			this.x = 25;
+		}
+		if (this.x > width-25) {
+			this.x = width-25;
+		}
+	}
+
+	jump() {
+		if (this.y == chars[(this.charID+1)%2].y + 50 && this.y == fl-25) { up[this.charID] = false; return; }
+		if (!up[this.charID]) { return; }
+		if (this.yp == 0) { this.yc = 8; }
+		this.yp -= this.yc;
+		this.yc -= .2;
+		if (this.yp > 0) {
+			this.yp = 0;
+			this.yc = 0;
+			up[this.charID] = false;
+			jc[this.charID] = 0;
+		}
+	}
+
+	boop() {
+		var otherX = chars[(this.charID+1)%2].x;
+		var otherY = chars[(this.charID+1)%2].y;
+
+		if (Math.abs(this.y - otherY) < 70 && Math.abs(this.x - otherX) < 55) {
+			if (this.charID == 0)
+				chars[(this.charID+1)%2].booped(boopAmount);
+			else
+				chars[(this.charID+1)%2].booped(-boopAmount);
+		}
+	}
+
+	booped(xv = this.boopVelo) {
+		this.beenBooped = true;
+		if (Math.abs(xv) > .5) {
+			this.x += xv;
+		}
+		else {
+			this.beenBooped = false;
+			this.boopVelo = 0;
+		}
+		if (xv < 0) { xv += .5; } else { xv -= .5; }
+		this.boopVelo = xv;
+	}
+
+	hitX() {
+		var otherX = chars[(this.charID+1)%2].x;
+		var otherY = chars[(this.charID+1)%2].y;
+
+		if (Math.abs(this.y - otherY) < 50 && Math.abs(this.x - otherX) < 50) {
+			if (this.x > otherX) {
+				this.x = otherX + 50;
+			} else {
+				this.x = otherX - 50;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	hitY() {
+		var otherX = chars[(this.charID+1)%2].x;
+		var otherY = chars[(this.charID+1)%2].y;
+
+		if (Math.abs(this.y - otherY) < 50 && Math.abs(this.x - otherX) < 50) {
+			if (this.y < otherY) {
+				this.y = chars[(this.charID+1)%2].y - 50;
+				this.yc = 0;
+				jc[this.charID] = 0;
+				chars[(this.charID+1)%2].yc = -1;
+			}
+			return true;
+		}
+		return false;
+	}
+}
+
+function drawGameArea() {
+	ctx.beginPath();
+    ctx.rect(0, cl,  width, 400);
+    ctx.fillStyle = "#F1F1F1";
+    ctx.fill();
+    ctx.closePath();
+}
+
+function setup() {
+	chars[attacker].att = 0;
+	chars[(attacker+1)%2].att = 1;
+}
+
+function f(x) {
+	return .02*x+.5;
+}
+
+function drawWinner(c) {
+	var colours = ["#914AF7", "#F5B84C"]
+	ctx.font = "150px Consolas";
+	ctx.fillStyle = colours[(colours.indexOf(c)+1)%2];
+	ctx.textAlign = "center";
+	ctx.fillText("WINNER",width/2,(cl+fl)/2);
+}
+
+function checkWin() {
+	var player = chars[attacker];
+	setup();
+	if (attacker) {
+		if (player.x <= 25) {
+			attacker = (attacker+1)%2;
+			player.x = width-100;
+			chars[attacker].x = 75;
+			lifeAmount = 500;
+			rounds++;
+		}
+		var grd1 = ctx.createLinearGradient(0,cl,100,cl);
+		grd1.addColorStop(1, "rgba(255, 255, 255, 0)");
+		grd1.addColorStop(0, "#E7B7FA");
+		ctx.fillStyle = grd1;
+		ctx.fillRect(0,cl,100,fl-cl);
+		drawLife("#E7B7FA", "#914AF7");
+	} else {
+		if (player.x >= width-25) {
+			attacker = (attacker+1)%2;
+			player.x = 75;
+			chars[attacker].x = width-100;
+			lifeAmount = 500;
+			rounds++;
+		}
+		var grd2 = ctx.createLinearGradient(width-100,cl,width,cl);
+		grd2.addColorStop(1, "#EBEB87");
+		grd2.addColorStop(0, "rgba(255, 255, 255, 0)");
+		ctx.fillStyle = grd2;
+		ctx.fillRect(width-100,cl,100,fl-cl);
+		drawLife("#EBEB87", "#F5B84C");
+	}
+	lifeAmount -= f(rounds);
+}
+
+function drawLife(c, c2) {
+	if (lifeAmount <= 0) { drawWinner(c2); return; }
+	ctx.beginPath();
+    ctx.rect(width/2-250, fl+50, lifeAmount, 100);
+    ctx.strokeStyle = c2;
+    ctx.lineWidth = 5;
+    ctx.fillStyle = c;
+    ctx.fill();
+    ctx.stroke();
+    ctx.closePath();
+	// ctx.save();
+	// ctx.rect(width/2-250, fl+50, lifeAmount, 100);
+	// ctx.clip();
+	// ctx.font = "120px Consolas";
+	// ctx.fillStyle = c2;
+	// ctx.fillText("boop",width/2-250,fl+130);
+	// ctx.restore();
+}
+
+var chars = [new Player(0), new Player(1)];
+
+function update() {
+	if (canvas.width != window.innerWidth-20 || canvas.height != window.innerHeight-20) {
+		canvas.width = window.innerWidth-20;
+		canvas.height = window.innerHeight-20;
+		width = canvas.width;
+		height = canvas.height;
+	}
+	ctx.clearRect(0, 0, width, height);
+	drawGameArea();
+	chars[0].update(left[0], right[0], up[0], shoot[0]);
+	chars[1].update(left[1], right[1], up[1], shoot[1]);
+	checkWin();
+}
+
+setInterval(update,10);
+	</script>
+
+</html>
