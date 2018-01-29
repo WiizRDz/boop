@@ -26,6 +26,7 @@ var attacker = Math.round(Math.random()); // 0 means they are attacking
 var boopAmount = 20;
 var lifeAmount = 500;
 var rounds = 0;
+var difficulty = 0;
 
 
 document.addEventListener("keydown", keyDownHandler, false);
@@ -78,6 +79,22 @@ function keyDownHandler(e) {
 	if (e.keyCode == 40) {
 		// down
 		shoot[1] = true;
+	}
+	if (e.keyCode == 49) {
+		// 1
+		difficulty = 0;
+	}
+	if (e.keyCode == 50) {
+		// 2
+		difficulty = 1;
+	}
+	if (e.keyCode == 51) {
+		// 3
+		difficulty = 2;
+	}
+	if (e.keyCode == 52) {
+		// 4
+		difficulty = 3;
 	}
 }
 
@@ -233,7 +250,7 @@ function setup() {
 }
 
 function f(x) {
-	return .02*x+.5+(1-width/1920)/1.5;
+	return .02*x+.5+(1-width/1920)/1.5+(difficulty*.15);
 }
 
 function drawWinner(c) {
