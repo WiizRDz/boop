@@ -6,6 +6,7 @@ Controls:
     - A/LEFT ARROW: Left
     - D/RIGHT ARROW: Right
     - S/DOWN ARROW: Boop
+    - 1,2,3,4: Changes difficulty, higher the number the faster the bar decreases
 
 Objective:
   - One of the side will glow with one of the player's colour
