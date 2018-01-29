@@ -6,7 +6,7 @@
 
 	<body style="background: #000000;">
 
-		<canvas style="background: #000000; top = 0; left = 0;" id="myCanvas" onmousedown="mouseClick(event, 'd')" onmousemove="mousePosition(event)" onmouseup="mouseClick(event, 'u')" onmousewheel="scrollWheel(event)" onmouseout="mouseout()"></canvas>
+		<canvas style="background: #000000; top = 0; left = 0;" id="myCanvas"></canvas>
 
 	</body>
 
@@ -59,22 +59,6 @@ function keyDownHandler(e) {
 		// a
 		left[0] = true;
 	}
-	if (e.keyCode == 49) {
-		// 1
-
-	}
-	if (e.keyCode == 50) {
-		// 2
-
-	}
-	if (e.keyCode == 51) {
-		// 3
-
-	}
-	if (e.keyCode == 52) {
-		// 4
-
-	}
 	if (e.keyCode == 37) {
 		// left
 		left[1] = true;
@@ -95,17 +79,9 @@ function keyDownHandler(e) {
 		// down
 		shoot[1] = true;
 	}
-	if (e.keyCode == 32) {
-		// space
-		
-	}
 }
 
 function keyUpHandler(e) {
-	if (e.keyCode == 87) {
-		// w
-		//up[0] = false;
-	}
 	if (e.keyCode == 68) {
 		// d
 		right[0] = false;
@@ -118,16 +94,9 @@ function keyUpHandler(e) {
 		// a
 		left[0] = false;
 	}
-	if (e.keyCode == 32) {
-		// space
-	}
 	if (e.keyCode == 37) {
 		// left
 		left[1] = false;
-	}
-	if (e.keyCode == 38) {
-		// up
-		
 	}
 	if (e.keyCode == 39) {
 		// right
@@ -137,36 +106,6 @@ function keyUpHandler(e) {
 		// down
 		shoot[1] = false;
 	}
-}
-
-function mouseout() {
-
-}
-
-function mouseClick(e,s) {
-	if (s == 'd') {
-
-		//console.log('down');
-	}
-	if (s == 'u') {
-
-		//console.log('up');
-	}
-}
-
-function scrollWheel(e) {
-	if (e.wheelDelta > 0) {
-
-	}
-	if (e.wheelDelta < 0) {
-	
-	}
-}
-
-function mousePosition(e) {
-	// xa = e.clientX;
-	// ya = e.clientY;
-	//console.log('x = ', e.clientX, 'y = ', e.clientY);
 }
 
 class Player {
@@ -350,13 +289,6 @@ function drawLife(c, c2) {
     ctx.fill();
     ctx.stroke();
     ctx.closePath();
-	// ctx.save();
-	// ctx.rect(width/2-250, fl+50, lifeAmount, 100);
-	// ctx.clip();
-	// ctx.font = "120px Consolas";
-	// ctx.fillStyle = c2;
-	// ctx.fillText("boop",width/2-250,fl+130);
-	// ctx.restore();
 }
 
 var chars = [new Player(0), new Player(1)];
